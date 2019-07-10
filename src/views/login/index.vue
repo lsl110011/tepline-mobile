@@ -76,7 +76,7 @@ export default {
         }
 
         // 表单验证通过，发送请求，loading加载
-        this.loginLoading = true
+        // this.loginLoading = true
 
         const data = await login(this.user)
         // 登录成功以后，提交moutation完成状态的修改

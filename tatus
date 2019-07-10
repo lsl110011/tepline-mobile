@@ -1,0 +1,35 @@
+[33mcommit 6d14a4e8c40726930148c6462b88b4bfa5b3f128[m
+Author: 阿力 <1924185420@qq.com>
+Date:   Wed Jul 10 18:06:32 2019 +0800
+
+    '登录loading加载和表单验证'
+
+[33mcommit b13cc92a57c5d8e92f612b86e9590651a45eaa69[m
+Author: 阿力 <1924185420@qq.com>
+Date:   Wed Jul 10 16:57:19 2019 +0800
+
+    'token值的存储'
+
+[33mcommit 8472da6dfcb6c0b1cffae8adc535edd78720d0c3[m
+Author: 阿力 <1924185420@qq.com>
+Date:   Tue Jul 9 21:57:02 2019 +0800
+
+    'request和api的封装'
+
+[33mcommit 6c3dcc90ed518e0bee42dc8d4533c7d596290da2[m
+Author: 阿力 <1924185420@qq.com>
+Date:   Tue Jul 9 19:04:56 2019 +0800
+
+    '登录页面'
+
+[33mcommit cc93f85f1a2d934144276f8ad093282055530407[m
+Author: 阿力 <1924185420@qq.com>
+Date:   Mon Jul 8 16:01:52 2019 +0800
+
+    '调整目录结构'
+
+[33mcommit 6df5d11133a575ba5076e469c5bf35b01dd8caf9[m
+Author: 阿力 <1924185420@qq.com>
+Date:   Mon Jul 8 15:21:25 2019 +0800
+
+    init
