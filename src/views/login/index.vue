@@ -23,20 +23,43 @@
         />
       </van-cell-group>
        <div class="login-btn-box">
-         <van-button class="login-btn" type="info">登录</van-button>
+         <van-button
+         class="login-btn"
+          type="info"
+          @click.prevent="handleLogin"
+          >登录</van-button>
        </div>
     </form>
   </div>
 </template>
 
 <script>
+import { login } from '@/api/user'
+// import { constants } from 'crypto'
 export default {
   name: 'LoginIndex',
   data () {
     return {
       user: {
-        mobile: '',
-        code: ''
+        mobile: '15036015854',
+        code: '123456'
+      }
+    }
+  },
+  methods: {
+    async handleLogin () {
+      try {
+        const data = await login(this.user)
+        // 登录成功以后，提交moutation完成状态的修改
+        this.$store.commit('setUser', data)
+
+        // 先直接简单跳转到首页，真实的业务要跳转到之前过来的页面
+        this.$router.push({
+          name: 'home'
+        })
+      } catch (err) {
+        console.log(err)
+        console.log('登录失败')
       }
     }
   }
