@@ -33,7 +33,15 @@ v-model="activeChannelIndex">
         v-for="item in channelItem.articles"
         :key="item.art_id"
         :title="item.title"
-      />
+       >
+        <p slot="label">
+          <span>{{ item.aut_name }}</span>
+          &nbsp;
+          <span>{{ item.comm_count }}</span>
+          &nbsp;
+          <span>{{ item.pubdate }}</span>
+        </p>
+       </van-cell>
     </van-list>
    </van-pull-refresh>
   </van-tab>
@@ -47,10 +55,14 @@ v-model="activeChannelIndex">
     <van-tabbar-item icon="setting-o" to="my">我的</van-tabbar-item>
 </van-tabbar>
 <!-- 频道组件 -->
+<!-- .sync修饰符会自动监听一个事件：
+ @update:user-channel="channel = $event"
+ 简单来说：给props数组加.sync其实就是v-model的作用，一个组件只能有一个v-model
+ @update-user-channels="channels.push($event)" -->
 <home-channel
-v-model="isChannelShow"
-:user-channels="channels"
-:active-index="activeChannelIndex"
+    v-model="isChannelShow"
+    :user-channels.sync="channels"
+    :active-index.sync="activeChannelIndex"
 ></home-channel>
   </div>
 </template>
@@ -91,7 +103,7 @@ export default {
 
       // 只需将当前激活频道的上拉loading设置为true,会自动调用自己的onload函数
       //  this.activeChannel.upLoading = true
-      this.onload()
+      // this.onload()
     }
   },
   async created () {

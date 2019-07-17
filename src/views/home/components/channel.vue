@@ -18,18 +18,24 @@
             type="danger"
             plain
             size="mini"
-          >编辑</van-button>
+            @click="isEdit = !isEdit"
+          >{{ isEdit ? '完成' : '编辑'}}</van-button>
         </div>
       </div>
       <van-grid class="channel-content" :gutter="10" clickable>
         <van-grid-item
           v-for="(item, index) in userChannels"
           :key="item.id"
-          text="文字">
+          @click="handleUserChannelClick(item, index)"
+          >
           <span
            class="text"
-           :class="{ active:index === activeIndex}"
+           :class="{ active:index === activeIndex && !isEdit}"
            >{{ item.name }}</span>
+           <van-icon
+             class="close-icon"
+             v-show="isEdit"
+             name="close" />
         </van-grid-item>
       </van-grid>
     </div>
@@ -59,7 +65,17 @@
 </template>
 
 <script>
-import { getAllChannels } from '@/api/channel'
+import {
+  getAllChannels,
+  deleteUserChannel,
+  updateUserChannel } from '@/api/channel'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/zh-cn'
+
+dayjs.extend(relativeTime) // 扩展相对时间插件
+dayjs.locale('zh-cn') // 设置使用中文
+console.log(dayjs().from(dayjs('2019-7-16')))
 export default {
   name: 'HomeChannel',
   props: {
@@ -78,7 +94,8 @@ export default {
   },
   data () {
     return {
-      allChannels: []
+      allChannels: [],
+      isEdit: false
     }
   },
   computed: {
@@ -96,14 +113,62 @@ export default {
     async loadAllChannels () {
       try {
         const data = await getAllChannels()
-        console.log(data)
+        data.channels.forEach(item => {
+          item.articles = [] // 频道的文章
+          item.timestamp = Date.now() // 用于下一页频道数据的时间戳
+          item.finished = false // 控制该频道上拉加载是否已加载完毕
+          item.upLoading = false // 控制该频道的下拉刷新 loading
+          item.pullRefreshLoading = false // 控制频道列表的下拉刷新状态
+          item.pullSuccessText = '' // 控制频道列表的下拉刷新成功提示文字
+        })
+
         this.allChannels = data.channels
       } catch (err) {
         console.log(err)
       }
     },
-    handleAddChannel (item) {
-      this.userChannels.push(item)
+    async handleAddChannel (item) {
+      // this.userChannels.push(item)
+
+      // 截取一个新的数组，操作这个数组，操作结束将结果传递给父组件，让父组件自己去修改
+      // 始终记住一个原则：Props 数据是单向的，不要在子组件中修改它，始终由父组件去修改从而影响它
+      const channels = this.userChannels.slice(0)
+      channels.push(item)
+      this.$emit('update:user-channels', channels)
+
+      const { user } = this.$store.state
+      // 如果登录已登录，则请求添加用户频道
+      if (user) {
+        await updateUserChannel([{
+          id: item.id,
+          seq: channels.length - 1
+        }])
+      } else {
+        // 如果没有登录，则添加到本地存储
+        // 没有就创建，有的话就直接覆盖
+        // 注意：本地存储数据无法像js数据去修改，要想改变只能完全重写
+        window.localStorage.setItem('channel', JSON.stringify(channels))
+      }
+    },
+    async handleUserChannelClick (item, index) {
+      // 如果是非编辑状态，则是切换tab显示
+      if (!this.isEdit) {
+        this.$emit('update:active-index', index)
+        this.$emit('input', false)
+        return
+      }
+      // 如果是编辑状态，则是删除操作
+      const channels = this.userChannels.slice(0)
+      channels.splice(index, 1)
+      this.$emit('update:user-channels', channels)
+      const { user } = this.$store.state
+      // 如果用户登录，则请求删除
+      if (user) {
+        await deleteUserChannel(item.id)
+        return
+      }
+      // 如果用户没有登录，则将数据保存到本地存储
+      window.localStorage.setItem('channels', JSON.stringify(channels))
     }
   }
 }
