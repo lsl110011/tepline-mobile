@@ -35,11 +35,23 @@ v-model="activeChannelIndex">
         :title="item.title"
        >
         <p slot="label">
+          <template v-if="item.cover.type">
+            <van-grid :border="false" :column-num="3">
+              <van-grid-item
+                v-for="(img, index) in item.cover.images"
+                :key="index"
+              />
+                <van-image
+                  :src="img"
+                  lazy-load
+                />
+            </van-grid>
+          </template>
           <span>{{ item.aut_name }}</span>
           &nbsp;
           <span>{{ item.comm_count }}</span>
           &nbsp;
-          <span>{{ item.pubdate }}</span>
+          <span>{{ item.pubdate | relativeTime  }}</span>
         </p>
        </van-cell>
     </van-list>
@@ -64,6 +76,14 @@ v-model="activeChannelIndex">
     :user-channels.sync="channels"
     :active-index.sync="activeChannelIndex"
 ></home-channel>
+<!-- 更多操作弹框 -->
+<van-dialog
+    v-model="show"
+    title="标题"
+    show-cancel-button
+  >
+    <img src="https://img.yzcdn.cn/vant/apple-3.jpg">
+</van-dialog>
   </div>
 </template>
 
@@ -84,7 +104,8 @@ export default {
       finished: false,
       pullRefreshLoading: false,
       channels: [], // 存储频道列表
-      isChannelShow: false // 控制频道面板的显示
+      isChannelShow: false, // 控制频道面板的显示
+      img: ''
     }
   },
   computed: {
@@ -242,5 +263,9 @@ export default {
   background: #fff;
   opacity: .7;
   z-index: inherit;
+}
+.channel-tabs .close {
+  float: right;
+  font-size: 30px;
 }
 </style>
