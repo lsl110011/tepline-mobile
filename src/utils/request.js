@@ -1,6 +1,7 @@
 // 用于存放请求文件
 import axios from 'axios'
 import store from '@/store'
+import JSONbig from 'json-bigint'
 
 // axios.create用于创建一个axios实例，该实例和axios的功能一样
 // 归根到底也就是克隆了一个axios
@@ -9,7 +10,16 @@ const request = axios.create({
   // baseURL: 'http://toutiao.course.itcast.cn'
   baseURL: 'http://ttapi.research.itcast.cn'
 })
-
+// 处理后端返回数据中数字超出JavaScript安全整数范围
+request.defaults.transformResponse = [function (data) {
+  try {
+    // 如果是json格式字符串，就转换并返回给后续使用
+    return JSONbig.parse(data)
+  } catch (err) {
+    // 报错意味着data不是json格式字符串，就直接原样返回给后续使用
+    return data
+  }
+}]
 // Add a request interceptor
 request.interceptors.request.use(function (config) {
   // Do something before request is sent
