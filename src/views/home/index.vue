@@ -52,6 +52,8 @@ v-model="activeChannelIndex">
           <span>{{ item.comm_count }}</span>
           &nbsp;
           <span>{{ item.pubdate | relativeTime  }}</span>
+          <!-- 这里更多操作的点击按钮 -->
+          <van-icon class="close" name="close" @click="handleShowMoreAction(item)"/>
         </p>
        </van-cell>
     </van-list>
@@ -82,7 +84,7 @@ v-model="activeChannelIndex">
     :showConfirmButton="false"
   >
     <van-cell-group v-if="!toggleRubbish">
-      <van-cell title="不感兴趣"/>
+      <van-cell title="不感兴趣" @click="handleDislick"/>
       <van-cell title="反馈垃圾内容" is-link @click="toggleRubbish = true"/>
       <van-cell title="反馈垃圾内容"/>
     </van-cell-group>
@@ -116,8 +118,9 @@ export default {
       channels: [], // 存储频道列表
       isChannelShow: false, // 控制频道面板的显示
       img: '',
-      isMoreActionShow: true, // 控制更多操作弹框面板
-      toggleRubbish: false // 控制反馈垃圾弹框内容的显示
+      isMoreActionShow: false, // 控制更多操作弹框面板
+      toggleRubbish: false, // 控制反馈垃圾弹框内容的显示
+      currentArticle: null // 存储当前操作更多的文章
 
     }
   },
@@ -249,6 +252,17 @@ export default {
       }
       // 关闭下拉的loading状态
       this.activeChannel.pullRefreshLoading = false
+    },
+    // 处理显示更多操作弹框面板
+    handleShowMoreAction (item) {
+      // 将点击操作更多的文章存储起来，用于后续使用
+      this.currentArticle = item
+      // 显示弹框
+      this.isMoreActionShow = true
+    },
+    async handleDislick () {
+      //  拿到操作的文章id
+      // 请求完成操作
     }
   }
 }
