@@ -31,7 +31,7 @@ v-model="activeChannelIndex">
     >
       <van-cell
         v-for="item in channelItem.articles"
-        :key="item.art_id"
+        :key="item.art_id.toString()"
         :title="item.title"
        >
         <p slot="label">
@@ -101,7 +101,7 @@ v-model="activeChannelIndex">
 
 <script>
 import { getUserChannels } from '@/api/channel'
-import { getArticles } from '@/api/article'
+import { getArticles, dislikeArticle } from '@/api/article'
 import HomeChannel from './components/channel'
 export default {
   name: 'HomeIndex',
@@ -262,7 +262,16 @@ export default {
     },
     async handleDislick () {
       //  拿到操作的文章id
+      const articleId = this.currentArticle.art_id.toString()
       // 请求完成操作
+      await dislikeArticle(articleId)
+      // 隐藏对话框
+      this.isMoreActionShow = false
+      // 当前频道文章列表
+      const articles = this.activeChannel.articles
+      const delIndex = articles.findIndex(item => item.art_id.toString() === articleId)
+      // 把本条数据移除
+      articles.splice(delIndex, 1)
     }
   }
 }
