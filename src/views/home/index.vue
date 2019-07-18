@@ -78,11 +78,21 @@ v-model="activeChannelIndex">
 ></home-channel>
 <!-- 更多操作弹框 -->
 <van-dialog
-    v-model="show"
-    title="标题"
-    show-cancel-button
+    v-model="isMoreActionShow"
+    :showConfirmButton="false"
   >
-    <img src="https://img.yzcdn.cn/vant/apple-3.jpg">
+    <van-cell-group v-if="!toggleRubbish">
+      <van-cell title="不感兴趣"/>
+      <van-cell title="反馈垃圾内容" is-link @click="toggleRubbish = true"/>
+      <van-cell title="反馈垃圾内容"/>
+    </van-cell-group>
+    <van-cell-group v-else>
+      <van-cell icon="arrow-left" @click="toggleRubbish=false"/>
+      <van-cell title="标题夸张"/>
+      <van-cell title="低速色情" />
+      <van-cell title="错别字多"/>
+      <van-cell title="旧闻重复" />
+    </van-cell-group>
 </van-dialog>
   </div>
 </template>
@@ -105,7 +115,10 @@ export default {
       pullRefreshLoading: false,
       channels: [], // 存储频道列表
       isChannelShow: false, // 控制频道面板的显示
-      img: ''
+      img: '',
+      isMoreActionShow: true, // 控制更多操作弹框面板
+      toggleRubbish: false // 控制反馈垃圾弹框内容的显示
+
     }
   },
   computed: {
