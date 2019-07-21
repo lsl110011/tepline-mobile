@@ -6,6 +6,7 @@
       left-text="返回"
       left-arrow
       fixed
+      @click-left="$router.back()"
     />
     <!-- 文章列表 -->
     <van-list
@@ -25,6 +26,7 @@
 </template>
 
 <script>
+import { getSearch } from '@/api/search'
 export default {
   name: 'SearchResult',
   data () {
@@ -33,6 +35,13 @@ export default {
       loading: false,
       finished: false
     }
+  },
+  async created () {
+    const data = await getSearch({
+      q: this.$route.params.q,
+      page: 1
+    })
+    console.log(data)
   },
   methods: {
     onLoad () {
@@ -57,7 +66,7 @@ export default {
 <style lang="less" scoped>
   .search-result{
     .article-list{
-      // margin-top: 92px;
+      margin-top: 92px;
     }
   }
 </style>
