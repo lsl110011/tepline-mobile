@@ -1,16 +1,26 @@
 <template>
   <div>
-    <van-search
-     placeholder="请输入搜索关键词" v-model="searchText"
-     show-action />
+    <form action="/">
+        <van-search
+          placeholder="请输入搜索关键词" v-model="searchText"
+          @search="handleSearch(searchText)"
+          show-action />
+    </form>
+
      <!-- 联想建议列表 -->
      <van-cell-group>
          <van-cell
         icon="search"
         v-for="item in suggestions"
         :key="item"
-        :title="item"
-      />
+        @click="handleSearch(item)"
+      >
+      <!-- {{}} 无法输出html字符内容
+      v-html 指令才会解析字符串中的html
+      过滤只能用在{{}}和v-bind中 -->
+
+      <div slot="title" v-html="hightlight(item, searchText)"></div>
+     </van-cell>
     </van-cell-group>
      <!-- 历史记录 -->
      <!-- <van-cell
@@ -51,6 +61,19 @@ export default {
       const data = await getSuggestion(newVal)
       this.suggestions = data.options
     }, 500)
+  },
+  methods: {
+    hightlight (text, keyword) {
+      return text.toLowerCase().split(keyword).join(`<span style="color: red;">${keyword}</span>`)
+    },
+    handleSearch (q) {
+      this.$router.push({
+        name: 'search-result',
+        params: {
+          q
+        }
+      })
+    }
   }
 }
 </script>
