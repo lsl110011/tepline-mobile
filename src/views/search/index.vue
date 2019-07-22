@@ -8,7 +8,7 @@
     </form>
 
      <!-- 联想建议列表 -->
-     <van-cell-group v-if="suggestions.length">
+     <van-cell-group v-if="suggestions.length && searchText.length  ">
          <van-cell
         icon="search"
         v-for="item in suggestions"
@@ -33,9 +33,10 @@
             style="line-height: inherit;"
           />
           </van-cell>
-          <van-cell title="hello"/>
-           <van-cell title="hello"/>
-            <van-cell title="hello"/>
+          <van-cell
+          v-for="item in searchHistories"
+          :key='item'
+          :title="item"/>
      </van-cell-group>
 
   </div>
@@ -48,8 +49,10 @@ export default {
   name: 'SearchIndex',
   data () {
     return {
-      searchText: '',
-      suggestions: []
+      searchText: '', // 搜索输入的文本
+      suggestions: [], // 联想建议
+      searchHistories: JSON.parse(window.localStorage.getItem('search-histories')) // 搜索历史记录
+
     }
   },
   watch: {
@@ -73,12 +76,19 @@ export default {
       return text.toLowerCase().split(keyword).join(`<span style="color: red;">${keyword}</span>`)
     },
     handleSearch (q) {
-      this.$router.push({
-        name: 'search-result',
-        params: {
-          q
-        }
-      })
+      if (!q.length) {
+        return
+      }
+      this.searchHistories.push(q)
+      // 保存搜索历史记录
+      window.localStorage.setItem('search-histories', JSON.stringify([...new Set(this.searchHistories)]))
+      // window.localStorage.setItem('search-histories',JSON.stringify(this.searchHistories))
+      // this.$router.push({
+      //   name: 'search-result',
+      //   params: {
+      //     q
+      //   }
+      // })
     }
   }
 }
