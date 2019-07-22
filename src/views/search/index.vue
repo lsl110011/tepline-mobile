@@ -28,15 +28,29 @@
             title="历史记录"
           >
           <van-icon
+            v-show="!isDelteShow"
             slot="right-icon"
             name="delete"
+            @click="isDelteShow = true"
+            style="line-height: inherit;"
+          />
+          <div v-show="isDelteShow">
+            <span style="margin-right: 10px" @click="searchHistories = []">全部删除</span>
+            <span @click="isDeleteShow = false">完成</span>
+          </div>
+          </van-cell>
+          <van-cell
+          v-for="(item, index) in searchHistories"
+          :key="item"
+          :title="item">
+           <van-icon
+            v-show="isDelteShow"
+            slot="right-icon"
+            name="close"
+            @click="searchHistories.splice(index, 1)"
             style="line-height: inherit;"
           />
           </van-cell>
-          <van-cell
-          v-for="item in searchHistories"
-          :key='item'
-          :title="item"/>
      </van-cell-group>
 
   </div>
@@ -51,9 +65,12 @@ export default {
     return {
       searchText: '', // 搜索输入的文本
       suggestions: [], // 联想建议
-      searchHistories: JSON.parse(window.localStorage.getItem('search-histories')) // 搜索历史记录
-
+      searchHistories: JSON.parse(window.localStorage.getItem('search-histories')), // 搜索历史记录
+      isDelteShow: false
     }
+  },
+  deactivated () {
+    this.$destroy()
   },
   watch: {
     // debounce 接收两个参数
@@ -69,7 +86,14 @@ export default {
       // 如果数据不为空，则请求联想建议自动补全
       const data = await getSuggestion(newVal)
       this.suggestions = data.options
-    }, 500)
+    }, 500),
+    searchHistories: {
+      handler () {
+      // 保存搜索历史记录
+        window.localStorage.setItem('search-histories', JSON.stringify([...new Set(this.searchHistories)]))
+      },
+      deep: true
+    }
   },
   methods: {
     hightlight (text, keyword) {
@@ -79,16 +103,14 @@ export default {
       if (!q.length) {
         return
       }
-      this.searchHistories.push(q)
-      // 保存搜索历史记录
-      window.localStorage.setItem('search-histories', JSON.stringify([...new Set(this.searchHistories)]))
-      // window.localStorage.setItem('search-histories',JSON.stringify(this.searchHistories))
-      // this.$router.push({
-      //   name: 'search-result',
-      //   params: {
-      //     q
-      //   }
-      // })
+      this.searchHistories.unshift(q)
+
+      this.$router.push({
+        name: 'search-result',
+        params: {
+          q
+        }
+      })
     }
   }
 }
