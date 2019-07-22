@@ -27,6 +27,7 @@
 
 <script>
 import { getSearch } from '@/api/search'
+
 export default {
   name: 'SearchResult',
   data () {
@@ -39,10 +40,27 @@ export default {
       articles: []
     }
   },
+
   computed: {
     q () {
       return this.$route.params.q
     }
+  },
+  watch: {
+    '$route' (to, from) {
+      // 对路由变化作出响应...
+      console.log('路由变化')
+    }
+  },
+  // 组件缓存的情况下： 页面显示出来调用它
+  activated () {
+    this.loading = true
+    this.onLoad()
+  },
+  // 组件缓存的情况下： 页面隐藏调用它
+  deactivated () {
+    this.articles = []
+    this.page = 1
   },
   async created () {
     const data = await getSearch({
@@ -59,6 +77,7 @@ export default {
       if (!data.results.length) {
         this.loading = false
         this.finished = true
+        return
       }
       // 如果有数据，则将本次加载到的数据push到列表数组中
       this.articles.push(...data.results)
