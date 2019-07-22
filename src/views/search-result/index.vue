@@ -61,6 +61,9 @@ export default {
   deactivated () {
     this.articles = []
     this.page = 1
+    // 也可以在组件缓存失活的时候，直接手动销毁这个组件
+    // 就是手动禁用当前组件缓存
+    // this.$destroy()
   },
   async created () {
     const data = await getSearch({

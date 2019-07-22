@@ -8,7 +8,7 @@
     </form>
 
      <!-- 联想建议列表 -->
-     <van-cell-group>
+     <van-cell-group v-if="suggestions.length">
          <van-cell
         icon="search"
         v-for="item in suggestions"
@@ -23,15 +23,21 @@
      </van-cell>
     </van-cell-group>
      <!-- 历史记录 -->
-     <!-- <van-cell
-       title="历史记录"
-     >
-     <van-icon
-       slot="right-icon"
-       name="delete"
-       style="line-height: inherit;"
-     />
-     </van-cell> -->
+     <van-cell-group v-else>
+         <van-cell
+            title="历史记录"
+          >
+          <van-icon
+            slot="right-icon"
+            name="delete"
+            style="line-height: inherit;"
+          />
+          </van-cell>
+          <van-cell title="hello"/>
+           <van-cell title="hello"/>
+            <van-cell title="hello"/>
+     </van-cell-group>
+
   </div>
 </template>
 
